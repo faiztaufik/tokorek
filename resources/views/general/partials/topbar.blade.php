@@ -1,29 +1,95 @@
 <!-- Topbar Start -->
-<div class="container-fluid bg-light d-none d-lg-block">
-    <div class="row align-items-center top-bar">
-        <div class="col-lg-3 col-md-12 text-center text-lg-start">
-            <a href="" class="navbar-brand m-0 p-0">
-                <h1 class="text-primary m-0">Access Computer Shop</h1>
-            </a>
-        </div>
-        <div class="col-lg-9 col-md-12 text-end">
-            <div class="h-100 d-inline-flex align-items-center me-4">
-                <i class="fa fa-map-marker-alt text-primary me-2"></i>
-                <p class="m-0">Jl. Sepakat 2 A. Yani 1 Pontianak, Kalimantan Barat</p>
+<style>
+    .topbar {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        font-size: 0.95rem;
+    }
+
+    .topbar .contact-info i {
+        color: #0d6efd;
+        margin-right: 8px;
+    }
+
+    .topbar .social-icons a {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+        color: #0d6efd;
+        border-radius: 50%;
+        margin-left: 6px;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .topbar .social-icons a:hover {
+        background-color: #0d6efd;
+        color: #fff;
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .brand-logo img {
+        height: 35px;
+    }
+
+    .brand-logo span {
+        font-weight: 600;
+        color: #0d6efd;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .topbar .contact-info {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .topbar .social-icons {
+            justify-content: center !important;
+        }
+
+        .brand-logo {
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+    }
+</style>
+
+<div class="topbar py-2">
+    <div class="container">
+        <div class="row align-items-center gy-2">
+            <!-- Logo + Brand -->
+            <div class="col-lg-3 col-md-12 brand-logo">
+                <img src="{{ asset('img/logoacs.png') }}" alt="Logo">
+                <span>Access Computer Shop</span>
             </div>
-            <div class="h-100 d-inline-flex align-items-center me-4">
-                <i class="far fa-envelope-open text-primary me-2"></i>
-                <p class="m-0">servicekomputer@email.com</p>
+
+            <!-- Contact Info -->
+            <div class="col-lg-6 col-md-7 contact-info d-flex align-items-center flex-wrap justify-content-md-start justify-content-center">
+                <div class="me-4 d-flex align-items-center">
+                    <i class="fa fa-map-marker-alt"></i>
+                    <span>Jl. Sepakat 2 A. Yani 1, Pontianak</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="far fa-envelope-open"></i>
+                    <span>servicekomputer@email.com</span>
+                </div>
             </div>
-            <div class="h-100 d-inline-flex align-items-center">
-                <a class="btn btn-sm-square bg-white text-primary me-1" href="#"><i
-                        class="fab fa-facebook-f"></i></a>
-                <a class="btn btn-sm-square bg-white text-primary me-1" href="#"><i
-                        class="fab fa-twitter"></i></a>
-                <a class="btn btn-sm-square bg-white text-primary me-1" href="#"><i
-                        class="fab fa-linkedin-in"></i></a>
-                <a class="btn btn-sm-square bg-white text-primary me-0" href="#"><i
-                        class="fab fa-instagram"></i></a>
+
+            <!-- Social Media -->
+            <div class="col-lg-3 col-md-5 social-icons d-flex justify-content-md-end justify-content-center">
+                <a href="https://www.facebook.com/share/1BiFnoNXgg/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.instagram.com/laptopbekaspontianak?igsh=Z3VndDB4ZHRuaHZh"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
     </div>

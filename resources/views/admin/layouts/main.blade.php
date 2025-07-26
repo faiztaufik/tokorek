@@ -153,6 +153,37 @@
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    <!-- Global Chat Unread Count -->
+    <script>
+        // Function to update chat unread count in sidebar
+        function updateChatUnreadCount() {
+            fetch('{{ route("admin.chat.unread-count") }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const badge = document.getElementById('chat-unread-badge');
+                        if (badge) {
+                            if (data.unread_count > 0) {
+                                badge.textContent = data.unread_count;
+                                badge.style.display = 'inline';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching unread count:', error));
+        }
+
+        // Update unread count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateChatUnreadCount();
+            
+            // Update unread count every 30 seconds
+            setInterval(updateChatUnreadCount, 30000);
+        });
+    </script>
+
     @stack('scripts')
 
 </body>

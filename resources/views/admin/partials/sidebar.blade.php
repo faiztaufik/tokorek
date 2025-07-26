@@ -111,6 +111,13 @@
              <span>Pengguna</span></a>
      </li>
      <li class="nav-item">
+         <a class="nav-link" href="{{ route('admin.chat') }}">
+             <i class="fas fa-comments"></i>
+             <span>Live Chat</span>
+             <span class="badge badge-danger badge-counter" id="chat-unread-badge" style="display: none;"></span>
+         </a>
+     </li>
+     <li class="nav-item">
          <a class="nav-link" href="{{ route('general.home') }}">
              <i class="fas fa-home"></i>
              <span>Halaman Utama</span></a>

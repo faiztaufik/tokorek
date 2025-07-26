@@ -17,7 +17,7 @@ class AdminChatController extends Controller
             'session_id',
             DB::raw('MAX(created_at) as latest_message_time'),
             DB::raw('COUNT(*) as message_count'),
-            DB::raw('SUM(CASE WHEN is_admin = 0 THEN 1 ELSE 0 END) as unread_count'),
+            DB::raw('SUM(CASE WHEN is_admin = 0 AND is_seen_by_admin = 0 THEN 1 ELSE 0 END) as unread_count'),
         ])
             ->whereNotNull('session_id')
             ->groupBy('session_id')
@@ -33,6 +33,15 @@ class AdminChatController extends Controller
             $messages = ChatMessage::where('session_id', $firstSessionId)
                 ->orderBy('created_at', 'asc')
                 ->get();
+
+            // Mark messages as read for the first session
+            ChatMessage::where('session_id', $firstSessionId)
+                ->where('is_admin', false)
+                ->where('is_seen_by_admin', false)
+                ->update([
+                    'is_seen_by_admin' => true,
+                    'seen_at' => now()
+                ]);
         }
 
         return view('admin.pages.chat.index', [
@@ -49,9 +58,28 @@ class AdminChatController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
+        // Mark all unread messages from users as read
+        ChatMessage::where('session_id', $sessionId)
+            ->where('is_admin', false)
+            ->where('is_seen_by_admin', false)
+            ->update([
+                'is_seen_by_admin' => true,
+                'seen_at' => now()
+            ]);
+
         return response()->json([
             'success' => true,
             'messages' => $messages,
+        ]);
+    }
+
+    public function getUnreadCount()
+    {
+        $totalUnread = ChatMessage::unreadByAdmin()->count();
+        
+        return response()->json([
+            'success' => true,
+            'unread_count' => $totalUnread,
         ]);
     }
 

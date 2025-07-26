@@ -110,6 +110,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin Chat Routes
     Route::get('/dashboard-admin/chat', [AdminChatController::class, 'index'])->name('admin.chat');
     Route::get('/dashboard-admin/chat/session/{sessionId}', [AdminChatController::class, 'getSession'])->name('admin.chat.session');
+    Route::get('/dashboard-admin/chat/unread-count', [AdminChatController::class, 'getUnreadCount'])->name('admin.chat.unread-count');
     Route::post('/dashboard-admin/chat/send', [AdminChatController::class, 'store'])->name('admin.chat.send');
     Route::delete('/dashboard-admin/chat/clear', [AdminChatController::class, 'clear'])->name('admin.chat.clear');
 });

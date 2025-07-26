@@ -17,12 +17,36 @@ class ChatMessage extends Model
         'file_path',
         'file_name',
         'file_type',
-        'file_size'
+        'file_size',
+        'is_seen_by_admin',
+        'seen_at'
     ];
 
     protected $casts = [
         'is_admin' => 'boolean',
+        'is_seen_by_admin' => 'boolean',
+        'seen_at' => 'datetime',
     ];
+
+    /**
+     * Scope for unread messages by admin
+     */
+    public function scopeUnreadByAdmin($query)
+    {
+        return $query->where('is_admin', false)
+                    ->where('is_seen_by_admin', false);
+    }
+
+    /**
+     * Mark message as seen by admin
+     */
+    public function markAsSeenByAdmin()
+    {
+        $this->update([
+            'is_seen_by_admin' => true,
+            'seen_at' => now()
+        ]);
+    }
 
     /**
      * Check if message has a file attachment

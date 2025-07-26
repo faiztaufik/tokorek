@@ -54,7 +54,7 @@
                                             </div>
                                         @endforeach
                                     @else
-                                        <div class="text-center p-3 p-md-4">
+                                        <div class="text-center p-3 p-md-4" id="no-sessions">
                                             <i class="bi bi-chat-dots display-4 text-muted mb-3"></i>
                                             <p class="text-muted">Belum ada chat sessions</p>
                                         </div>
@@ -64,33 +64,43 @@
 
                             <!-- Chat Messages Area -->
                             <div class="col-lg-8 d-flex flex-column chat-area">
-                                @if ($activeSession)
-                                    <!-- Chat Header -->
-                                    <div class="p-2 p-md-3 border-bottom bg-white">
-                                        <div class="d-flex align-items-center">
-                                            <!-- Back button for mobile -->
-                                            <button class="btn btn-sm btn-outline-secondary d-lg-none me-2"
-                                                id="back-to-sessions">
-                                                <i class="bi bi-arrow-left"></i>
-                                            </button>
-                                            <div class="me-2 me-md-3">
-                                                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
-                                                    style="width: 30px; height: 30px;">
-                                                    <i class="bi bi-person-circle fs-6"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fs-6" id="active-user-name">Pengguna
-                                                    {{ $activeSession->session_id }}</h6>
-                                                <small class="text-muted" id="active-session-id">Session:
-                                                    {{ $activeSession->session_id }}</small>
+                                <!-- Chat Header -->
+                                <div class="p-2 p-md-3 border-bottom bg-white">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Back button for mobile -->
+                                        <button class="btn btn-sm btn-outline-secondary d-lg-none me-2"
+                                            id="back-to-sessions">
+                                            <i class="bi bi-arrow-left"></i>
+                                        </button>
+                                        <div class="me-2 me-md-3">
+                                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 30px; height: 30px;">
+                                                <i class="bi bi-person-circle fs-6"></i>
                                             </div>
                                         </div>
+                                        <div>
+                                            <h6 class="mb-0 fs-6" id="active-user-name">
+                                                @if($firstSessionId)
+                                                    Pengguna {{ $firstSessionId }}
+                                                @else
+                                                    Select Session
+                                                @endif
+                                            </h6>
+                                            <small class="text-muted" id="active-session-id">
+                                                @if($firstSessionId)
+                                                    Session: {{ $firstSessionId }}
+                                                @else
+                                                    No active session
+                                                @endif
+                                            </small>
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <!-- Messages Container -->
-                                    <div class="flex-grow-1 p-2 p-md-4 bg-light overflow-auto" id="admin-chat-box"
-                                        style="max-height: calc(70vh - 120px);">
+                                <!-- Messages Container -->
+                                <div class="flex-grow-1 p-2 p-md-4 bg-light overflow-auto" id="admin-chat-box"
+                                    style="max-height: calc(70vh - 120px);">
+                                    @if($messages->count() > 0)
                                         @foreach ($messages as $message)
                                             @if ($message->is_admin)
                                                 {{-- Admin Message --}}
@@ -200,59 +210,64 @@
                                                 </div>
                                             @endif
                                         @endforeach
-                                    </div>
-
-                                    <!-- Admin Reply Form -->
-                                    <div class="border-top p-2 p-md-3 bg-white">
-                                        <form id="admin-chat-form" enctype="multipart/form-data">
-                                            @csrf
-                                            <input type="hidden" id="current-session-id"
-                                                value="{{ $activeSession->session_id }}">
-                                            
-                                            <!-- File Preview Area -->
-                                            <div id="admin-file-preview" class="mb-2" style="display: none;">
-                                                <div class="border rounded p-2 bg-light">
-                                                    <div class="d-flex align-items-center justify-content-between">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="bi bi-file-earmark me-2 text-primary"></i>
-                                                            <div>
-                                                                <div id="admin-file-name" class="fw-semibold small"></div>
-                                                                <div id="admin-file-size" class="small text-muted"></div>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn btn-sm btn-outline-danger" id="admin-remove-file">
-                                                            <i class="bi bi-x"></i>
-                                                        </button>
-                                                    </div>
-                                                    <img id="admin-image-preview" class="mt-2 img-thumbnail" style="max-height: 150px; display: none;" />
-                                                </div>
+                                    @else
+                                        <div class="d-flex align-items-center justify-content-center h-100">
+                                            <div class="text-center p-3">
+                                                <i class="bi bi-chat-dots display-4 text-muted mb-3"></i>
+                                                @if($sessions->count() > 0)
+                                                    <h5 class="text-muted fs-6">Pilih session untuk memulai chat</h5>
+                                                    <p class="text-muted small">Pilih salah satu session dari sidebar kiri</p>
+                                                @else
+                                                    <h5 class="text-muted fs-6">Belum ada chat sessions</h5>
+                                                    <p class="text-muted small">Menunggu pengguna untuk memulai chat</p>
+                                                @endif
                                             </div>
-
-                                            <div class="input-group">
-                                                <input type="file" id="admin-file-input" name="file" class="d-none" accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar">
-                                                <button type="button" class="btn btn-outline-secondary" id="admin-file-btn" title="Upload File">
-                                                    <i class="bi bi-paperclip"></i>
-                                                </button>
-                                                <input type="text" id="admin-message-input" name="message"
-                                                    class="form-control border-0 shadow-sm"
-                                                    placeholder="Ketik balasan atau upload file..." style="font-size: 14px;">
-                                                <button class="btn btn-primary rounded-end-pill px-3 px-md-4" type="submit"
-                                                    id="admin-send-btn">
-                                                    <i class="bi bi-send-fill"></i>
-                                                    <span class="d-none d-md-inline ms-1">Kirim</span>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                @else
-                                    <div class="d-flex align-items-center justify-content-center h-100">
-                                        <div class="text-center p-3">
-                                            <i class="bi bi-chat-dots display-4 text-muted mb-3"></i>
-                                            <h5 class="text-muted fs-6">Pilih session untuk memulai chat</h5>
-                                            <p class="text-muted small">Pilih salah satu session dari sidebar kiri</p>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
+
+                                <!-- Admin Reply Form -->
+                                <div class="border-top p-2 p-md-3 bg-white">
+                                    <form id="admin-chat-form" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" id="current-session-id" value="{{ $firstSessionId ?? '' }}">
+                                        
+                                        <!-- File Preview Area -->
+                                        <div id="admin-file-preview" class="mb-2" style="display: none;">
+                                            <div class="border rounded p-2 bg-light">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-file-earmark me-2 text-primary"></i>
+                                                        <div>
+                                                            <div id="admin-file-name" class="fw-semibold small"></div>
+                                                            <div id="admin-file-size" class="small text-muted"></div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" id="admin-remove-file">
+                                                        <i class="bi bi-x"></i>
+                                                    </button>
+                                                </div>
+                                                <img id="admin-image-preview" class="mt-2 img-thumbnail" style="max-height: 150px; display: none;" />
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <input type="file" id="admin-file-input" name="file" class="d-none" accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                                            <button type="button" class="btn btn-outline-secondary" id="admin-file-btn" title="Upload File">
+                                                <i class="bi bi-paperclip"></i>
+                                            </button>
+                                            <input type="text" id="admin-message-input" name="message"
+                                                class="form-control border-0 shadow-sm"
+                                                placeholder="Ketik balasan atau upload file..." style="font-size: 14px;" 
+                                                {{ $firstSessionId ? '' : 'disabled' }}>
+                                            <button class="btn btn-primary rounded-end-pill px-3 px-md-4" type="submit"
+                                                id="admin-send-btn" {{ $firstSessionId ? '' : 'disabled' }}>
+                                                <i class="bi bi-send-fill"></i>
+                                                <span class="d-none d-md-inline ms-1">Kirim</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -377,6 +392,33 @@
             #admin-message-input {
                 font-size: 14px;
             }
+        }
+
+        /* Session notification animations */
+        .session-item {
+            transition: background-color 0.3s ease;
+        }
+
+        .session-item .badge {
+            animation: pulse 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        /* File upload styles */
+        .file-message img {
+            transition: transform 0.2s ease;
+        }
+        
+        .file-message img:hover {
+            transform: scale(1.05);
         }
     </style>
 
@@ -545,19 +587,26 @@
                 }
             }
 
-            // Setup Echo channel for specific session
-            function setupEchoChannel(sessionId) {
+            // Listen to chat channel
+            function setupEchoChannel() {
                 // Leave previous channel if exists
                 if (currentEchoChannel) {
                     window.Echo.leave(currentEchoChannel);
                 }
 
-                if (window.Echo && sessionId) {
+                if (window.Echo) {
                     // Listen to public chat channel for admin
                     currentEchoChannel = `chat`;
                     window.Echo.channel(currentEchoChannel)
                         .listen('MessageSent', (e) => {
                             console.log('New message received:', e);
+
+                            // Check if this is a new session that doesn't exist in the sidebar
+                            const existingSession = document.querySelector(`[data-session-id="${e.session_id}"]`);
+                            if (!existingSession && e.session_id && !e.is_admin) {
+                                // Add new session to the sidebar only for user messages
+                                addNewSessionToSidebar(e);
+                            }
 
                             // Check if message belongs to current active session
                             const activeSessionId = currentSessionInput ? currentSessionInput.value : null;
@@ -568,8 +617,163 @@
                                     addMessageToBox(e);
                                     scrollToBottom();
                                 }
+                            } else if (existingSession && !e.is_admin) {
+                                // Update session info in sidebar for non-active sessions (only for user messages)
+                                updateSessionInSidebar(e, existingSession);
                             }
                         });
+                }
+            }
+
+            // Setup Echo channel
+            setupEchoChannel();
+
+            // Add new session to sidebar
+            function addNewSessionToSidebar(message) {
+                const sessionsList = document.querySelector('.sessions-list');
+                document.getElementById('no-sessions').style.display = 'none';
+                if (!sessionsList) return;
+
+                const currentTime = new Date(message.created_at).toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const newSessionHtml = `
+                    <div class="session-item p-2 p-md-3 border-bottom cursor-pointer" 
+                         data-session-id="${message.session_id}"
+                         onclick="loadSession('${message.session_id}', this)">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-bold fs-6">Pengguna ${message.session_id}</h6>
+                                <small class="text-muted d-block">Session: ${message.session_id.substring(0, 8)}...</small>
+                                <small class="text-muted">1 messages</small>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted d-block">${currentTime}</small>
+                                <span class="badge bg-danger">1</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add the new session at the top of the list
+                sessionsList.insertAdjacentHTML('afterbegin', newSessionHtml);
+
+                // Update session count
+                const sessionCountElement = sessionsList.previousElementSibling?.querySelector('small');
+                if (sessionCountElement) {
+                    const currentCount = parseInt(sessionCountElement.textContent.match(/\d+/)?.[0] || 0);
+                    sessionCountElement.textContent = `${currentCount + 1} active conversations`;
+                }
+
+                // Show notification or highlight the new session
+                const newSessionElement = sessionsList.querySelector(`[data-session-id="${message.session_id}"]`);
+                if (newSessionElement) {
+                    newSessionElement.style.backgroundColor = '#e3f2fd';
+                    setTimeout(() => {
+                        newSessionElement.style.backgroundColor = '';
+                    }, 3000);
+                }
+
+                // Show notification
+                showNotification(`New chat session from ${message.user_name}`, 'info');
+            }
+
+            // Update existing session in sidebar
+            function updateSessionInSidebar(message, sessionElement) {
+                if (!sessionElement) return;
+
+                const currentTime = new Date(message.created_at).toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Update time
+                const timeElement = sessionElement.querySelector('.text-end small');
+                if (timeElement) {
+                    timeElement.textContent = currentTime;
+                }
+
+                // Update unread count
+                let badgeElement = sessionElement.querySelector('.badge');
+                if (badgeElement) {
+                    const currentCount = parseInt(badgeElement.textContent) || 0;
+                    badgeElement.textContent = currentCount + 1;
+                } else {
+                    // Create badge if it doesn't exist
+                    const textEndDiv = sessionElement.querySelector('.text-end');
+                    if (textEndDiv) {
+                        textEndDiv.insertAdjacentHTML('beforeend', '<span class="badge bg-danger">1</span>');
+                    }
+                }
+
+                // Update message count
+                const messageCountElement = sessionElement.querySelector('small.text-muted:last-of-type');
+                if (messageCountElement && messageCountElement.textContent.includes('messages')) {
+                    const currentCount = parseInt(messageCountElement.textContent.match(/\d+/)?.[0] || 0);
+                    messageCountElement.textContent = `${currentCount + 1} messages`;
+                }
+
+                // Move session to top of the list
+                const sessionsList = sessionElement.parentElement;
+                if (sessionsList && sessionElement !== sessionsList.firstElementChild) {
+                    sessionsList.insertBefore(sessionElement, sessionsList.firstElementChild);
+                }
+
+                // Briefly highlight the session
+                sessionElement.style.backgroundColor = '#fff3cd';
+                setTimeout(() => {
+                    sessionElement.style.backgroundColor = '';
+                }, 2000);
+
+                // Show notification for new message
+                showNotification(`New message from ${message.user_name}`, 'success');
+            }
+
+            // Show notification
+            function showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+                notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                notification.innerHTML = `
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : 'bi-info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+
+                // Add to document
+                document.body.appendChild(notification);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 5000);
+
+                // Try to play notification sound (if supported)
+                try {
+                    // Create a simple beep sound using Web Audio API
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } catch (e) {
+                    // Fallback: no sound if Web Audio API is not supported
+                    console.log('Notification sound not available');
                 }
             }
 
@@ -580,6 +784,12 @@
                     item.classList.remove('active');
                 });
                 element.classList.add('active');
+
+                // Clear unread badge for selected session
+                const badgeElement = element.querySelector('.badge');
+                if (badgeElement) {
+                    badgeElement.remove();
+                }
 
                 // Update current session ID
                 if (currentSessionInput) {
@@ -601,28 +811,56 @@
 
                             // Update header info
                             const firstMessage = data.messages.find(m => !m.is_admin);
+                            const activeUserName = document.getElementById('active-user-name');
+                            const activeSessionId = document.getElementById('active-session-id');
                             if (firstMessage) {
-                                document.getElementById('active-user-name').textContent = firstMessage
-                                    .user_name;
-                                document.getElementById('active-session-id').textContent =
-                                    `Session: ${sessionId}`;
+                                if (activeUserName) {
+                                    activeUserName.textContent = firstMessage.user_name;
+                                }
+                                if (activeSessionId) {
+                                    activeSessionId.textContent = `Session: ${sessionId}`;
+                                }
                             } else {
-                                document.getElementById('active-user-name').textContent =
-                                    `Pengguna ${sessionId}`;
-                                document.getElementById('active-session-id').textContent =
-                                    `Session: ${sessionId}`;
+                                if (activeUserName) {
+                                    activeUserName.textContent = `Pengguna ${sessionId}`;
+                                }
+                                if (activeSessionId) {
+                                    activeSessionId.textContent = `Session: ${sessionId}`;
+                                }
                             }
 
-                            // Setup Echo channel for this session
-                            setupEchoChannel(sessionId);
+                            // Enable form elements now that a session is active
+                            enableChatForm();
                         }
                     })
                     .catch(error => console.error('Error:', error));
             };
 
+            // Enable form elements when a session is loaded
+            function enableChatForm() {
+                const messageInput = document.getElementById('admin-message-input');
+                const fileInput = document.getElementById('admin-file-btn');
+                const submitButton = document.querySelector('#admin-send-btn');
+                
+                if (messageInput) {
+                    messageInput.disabled = false;
+                    messageInput.placeholder = 'Type your message...';
+                }
+                if (fileInput) {
+                    fileInput.disabled = false;
+                }
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            }
+
             // Update chat box with messages
             function updateChatBox(messages) {
-                if (!chatBox) return;
+                
+                if (!chatBox) {
+                    console.log('no')
+                    return;
+                }
 
                 chatBox.innerHTML = '';
                 messages.forEach(message => {

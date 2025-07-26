@@ -25,11 +25,12 @@ class AdminChatController extends Controller
             ->get();
 
         // Get messages for the first session (if any)
-        $activeSession = $sessions->first();
         $messages = collect();
+        $firstSessionId = null;
 
-        if ($activeSession) {
-            $messages = ChatMessage::where('session_id', $activeSession->session_id)
+        if ($sessions->count() > 0) {
+            $firstSessionId = $sessions->first()->session_id;
+            $messages = ChatMessage::where('session_id', $firstSessionId)
                 ->orderBy('created_at', 'asc')
                 ->get();
         }
@@ -38,7 +39,7 @@ class AdminChatController extends Controller
             'title' => 'Live Chat Admin',
             'sessions' => $sessions,
             'messages' => $messages,
-            'activeSession' => $activeSession,
+            'firstSessionId' => $firstSessionId,
         ]);
     }
 

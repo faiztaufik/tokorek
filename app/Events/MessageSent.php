@@ -5,7 +5,6 @@ namespace App\Events;
 use App\Models\ChatMessage;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -55,6 +54,10 @@ class MessageSent implements ShouldBroadcast
             'is_admin' => $this->chatMessage->is_admin,
             'session_id' => $this->chatMessage->session_id,
             'created_at' => $this->chatMessage->created_at->toISOString(),
+            'file_path' => $this->chatMessage->file_path,
+            'file_name' => $this->chatMessage->file_name,
+            'file_type' => $this->chatMessage->file_type,
+            'file_size' => $this->chatMessage->file_size,
         ];
     }
 }

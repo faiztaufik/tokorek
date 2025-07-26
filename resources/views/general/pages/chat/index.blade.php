@@ -200,7 +200,7 @@
                         <i class="bi bi-paperclip"></i>
                     </button>
                     <input type="text" id="message-input" name="message" class="form-control border-0 shadow-sm"
-                        placeholder="Ketik pesan atau upload file..." aria-label="Pesan" maxlength="1000">
+                        placeholder="Ketik pesan atau upload file..." aria-label="Pesan" maxlength="1000" autocomplete="off" required>
                     <button class="btn btn-primary rounded-end-pill px-4" type="submit" id="send-btn">
                         <i class="bi bi-send-fill me-1"></i> Kirim
                     </button>

@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>Access Computer Shop - {{ $title }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">

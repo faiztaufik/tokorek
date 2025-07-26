@@ -1,43 +1,64 @@
 <?php
 
-namespace App\Http\Controllers\General;
+namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
-class GeneralChatController extends Controller
+class AdminChatController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        // Generate or retrieve chat session UUID from cookie
-        $sessionId = $request->cookie('chat_session_id');
+        // Get all sessions with latest message and user info
+        $sessions = ChatMessage::select([
+            'session_id',
+            DB::raw('MAX(created_at) as latest_message_time'),
+            DB::raw('COUNT(*) as message_count'),
+            DB::raw('SUM(CASE WHEN is_admin = 0 THEN 1 ELSE 0 END) as unread_count'),
+        ])
+            ->whereNotNull('session_id')
+            ->groupBy('session_id')
+            ->orderBy('latest_message_time', 'desc')
+            ->get();
 
-        if (! $sessionId) {
-            $sessionId = Str::uuid()->toString();
+        // Get messages for the first session (if any)
+        $activeSession = $sessions->first();
+        $messages = collect();
+
+        if ($activeSession) {
+            $messages = ChatMessage::where('session_id', $activeSession->session_id)
+                ->orderBy('created_at', 'asc')
+                ->get();
         }
 
-        // Only get messages for the current session
+        return view('admin.pages.chat.index', [
+            'title' => 'Live Chat Admin',
+            'sessions' => $sessions,
+            'messages' => $messages,
+            'activeSession' => $activeSession,
+        ]);
+    }
+
+    public function getSession($sessionId)
+    {
         $messages = ChatMessage::where('session_id', $sessionId)
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Store session ID in session for Chrome compatibility
-        $request->session()->put('chat_session_id', $sessionId);
-
-        return response()->view('general.pages.chat.index', [
-            'title' => 'Live Chat',
+        return response()->json([
+            'success' => true,
             'messages' => $messages,
-            'currentSessionId' => $sessionId,
-        ])->cookie('chat_session_id', $sessionId, 60 * 24 * 30); // 30 days
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'message' => 'required|string|max:1000',
+            'session_id' => 'nullable|string',
         ]);
 
         // XSS Protection - Remove script tags and dangerous HTML
@@ -51,21 +72,11 @@ class GeneralChatController extends Controller
             ], 422);
         }
 
-        // Get session ID from cookie or generate new one
-        $sessionId = $request->cookie('chat_session_id');
-
-        if (! $sessionId) {
-            $sessionId = Str::uuid()->toString();
-        }
-
-        // Generate a consistent user name based on session
-        $userName = 'Pengguna '.substr($sessionId, -6); // Use last 6 chars of session ID
-
         $chatMessage = ChatMessage::create([
-            'user_name' => $userName,
+            'user_name' => 'Admin',
             'message' => $message,
-            'is_admin' => false,
-            'session_id' => $sessionId,
+            'is_admin' => true,
+            'session_id' => $request->session_id,
         ]);
 
         broadcast(new MessageSent($chatMessage))->toOthers();
@@ -73,7 +84,7 @@ class GeneralChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $chatMessage,
-        ])->cookie('chat_session_id', $sessionId, 60 * 24 * 30); // 30 days
+        ]);
     }
 
     /**
@@ -125,10 +136,13 @@ class GeneralChatController extends Controller
         return false;
     }
 
-    public function loadMessages()
+    public function clear()
     {
-        $messages = ChatMessage::latest()->take(50)->get()->reverse()->values();
+        ChatMessage::truncate();
 
-        return response()->json($messages);
+        return response()->json([
+            'success' => true,
+            'message' => 'All chats have been cleared.',
+        ]);
     }
 }

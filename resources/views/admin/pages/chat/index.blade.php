@@ -106,7 +106,40 @@
                                                         <div class="bg-primary text-white rounded px-2 px-md-3 py-2">
                                                             <div class="small text-white-50 fw-semibold mb-1">
                                                                 {{ $message->user_name }}</div>
-                                                            <div style="font-size: 14px;">{{ $message->message }}</div>
+                                                            
+                                                            {{-- File Display --}}
+                                                            @if($message->file_path)
+                                                                <div class="file-message mb-2">
+                                                                    @if($message->file_type && str_starts_with($message->file_type, 'image/'))
+                                                                        <img src="{{ asset('storage/' . $message->file_path) }}" 
+                                                                             class="img-fluid rounded" 
+                                                                             style="max-width: 200px; max-height: 150px; cursor: pointer;" 
+                                                                             onclick="window.open('{{ asset('storage/' . $message->file_path) }}', '_blank')">
+                                                                    @else
+                                                                        <a href="{{ asset('storage/' . $message->file_path) }}" 
+                                                                           class="text-decoration-none d-flex align-items-center p-2 border rounded bg-primary-subtle" 
+                                                                           target="_blank" style="font-size: 12px;">
+                                                                            <i class="bi 
+                                                                                @if($message->file_type === 'application/pdf') bi-file-earmark-pdf
+                                                                                @elseif($message->file_type && str_contains($message->file_type, 'word')) bi-file-earmark-word
+                                                                                @elseif($message->file_type === 'text/plain') bi-file-earmark-text
+                                                                                @elseif($message->file_type && (str_contains($message->file_type, 'zip') || str_contains($message->file_type, 'rar'))) bi-file-earmark-zip
+                                                                                @else bi-file-earmark
+                                                                                @endif me-2"></i>
+                                                                            <div>
+                                                                                <div class="fw-semibold">{{ $message->file_name }}</div>
+                                                                                @if($message->file_size)
+                                                                                    <div class="small text-muted">{{ $message->getFormattedFileSize() }}</div>
+                                                                                @endif
+                                                                            </div>
+                                                                        </a>
+                                                                    @endif
+                                                                </div>
+                                                            @endif
+                                                            
+                                                            @if($message->message)
+                                                                <div style="font-size: 14px;">{{ $message->message }}</div>
+                                                            @endif
                                                         </div>
                                                         <small class="text-muted"
                                                             style="font-size: 11px;">{{ $message->created_at->format('H:i') }}</small>
@@ -126,7 +159,40 @@
                                                         <div class="bg-white border rounded px-2 px-md-3 py-2 shadow-sm">
                                                             <div class="small text-primary fw-semibold mb-1">
                                                                 {{ $message->user_name }}</div>
-                                                            <div style="font-size: 14px;">{{ $message->message }}</div>
+                                                            
+                                                            {{-- File Display --}}
+                                                            @if($message->file_path)
+                                                                <div class="file-message mb-2">
+                                                                    @if($message->file_type && str_starts_with($message->file_type, 'image/'))
+                                                                        <img src="{{ asset('storage/' . $message->file_path) }}" 
+                                                                             class="img-fluid rounded" 
+                                                                             style="max-width: 200px; max-height: 150px; cursor: pointer;" 
+                                                                             onclick="window.open('{{ asset('storage/' . $message->file_path) }}', '_blank')">
+                                                                    @else
+                                                                        <a href="{{ asset('storage/' . $message->file_path) }}" 
+                                                                           class="text-decoration-none d-flex align-items-center p-2 border rounded bg-secondary-subtle" 
+                                                                           target="_blank" style="font-size: 12px;">
+                                                                            <i class="bi 
+                                                                                @if($message->file_type === 'application/pdf') bi-file-earmark-pdf
+                                                                                @elseif($message->file_type && str_contains($message->file_type, 'word')) bi-file-earmark-word
+                                                                                @elseif($message->file_type === 'text/plain') bi-file-earmark-text
+                                                                                @elseif($message->file_type && (str_contains($message->file_type, 'zip') || str_contains($message->file_type, 'rar'))) bi-file-earmark-zip
+                                                                                @else bi-file-earmark
+                                                                                @endif me-2"></i>
+                                                                            <div>
+                                                                                <div class="fw-semibold">{{ $message->file_name }}</div>
+                                                                                @if($message->file_size)
+                                                                                    <div class="small text-muted">{{ $message->getFormattedFileSize() }}</div>
+                                                                                @endif
+                                                                            </div>
+                                                                        </a>
+                                                                    @endif
+                                                                </div>
+                                                            @endif
+                                                            
+                                                            @if($message->message)
+                                                                <div style="font-size: 14px;">{{ $message->message }}</div>
+                                                            @endif
                                                         </div>
                                                         <small class="text-muted"
                                                             style="font-size: 11px;">{{ $message->created_at->format('H:i') }}</small>
@@ -138,14 +204,38 @@
 
                                     <!-- Admin Reply Form -->
                                     <div class="border-top p-2 p-md-3 bg-white">
-                                        <form id="admin-chat-form">
+                                        <form id="admin-chat-form" enctype="multipart/form-data">
                                             @csrf
                                             <input type="hidden" id="current-session-id"
                                                 value="{{ $activeSession->session_id }}">
+                                            
+                                            <!-- File Preview Area -->
+                                            <div id="admin-file-preview" class="mb-2" style="display: none;">
+                                                <div class="border rounded p-2 bg-light">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-file-earmark me-2 text-primary"></i>
+                                                            <div>
+                                                                <div id="admin-file-name" class="fw-semibold small"></div>
+                                                                <div id="admin-file-size" class="small text-muted"></div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" id="admin-remove-file">
+                                                            <i class="bi bi-x"></i>
+                                                        </button>
+                                                    </div>
+                                                    <img id="admin-image-preview" class="mt-2 img-thumbnail" style="max-height: 150px; display: none;" />
+                                                </div>
+                                            </div>
+
                                             <div class="input-group">
-                                                <input type="text" id="admin-message-input"
-                                                    class="form-control border-0 shadow-sm rounded-start-pill"
-                                                    placeholder="Ketik balasan..." required style="font-size: 14px;">
+                                                <input type="file" id="admin-file-input" name="file" class="d-none" accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                                                <button type="button" class="btn btn-outline-secondary" id="admin-file-btn" title="Upload File">
+                                                    <i class="bi bi-paperclip"></i>
+                                                </button>
+                                                <input type="text" id="admin-message-input" name="message"
+                                                    class="form-control border-0 shadow-sm"
+                                                    placeholder="Ketik balasan atau upload file..." style="font-size: 14px;">
                                                 <button class="btn btn-primary rounded-end-pill px-3 px-md-4" type="submit"
                                                     id="admin-send-btn">
                                                     <i class="bi bi-send-fill"></i>
@@ -299,6 +389,17 @@
             const quickReplyButtons = document.querySelectorAll('.quick-reply');
             const currentSessionInput = document.getElementById('current-session-id');
 
+            // File upload elements
+            const fileInput = document.getElementById('admin-file-input');
+            const fileBtn = document.getElementById('admin-file-btn');
+            const filePreview = document.getElementById('admin-file-preview');
+            const fileName = document.getElementById('admin-file-name');
+            const fileSize = document.getElementById('admin-file-size');
+            const imagePreview = document.getElementById('admin-image-preview');
+            const removeFileBtn = document.getElementById('admin-remove-file');
+            
+            let currentFile = null;
+
             // Mobile elements
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const sessionsSidebar = document.getElementById('sessions-sidebar');
@@ -307,6 +408,113 @@
 
             // Echo channel tracking
             let currentEchoChannel = null;
+
+            // File input click handler
+            if (fileBtn) {
+                fileBtn.addEventListener('click', function() {
+                    fileInput.click();
+                });
+            }
+            
+            // File selection handler
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        if (validateFile(file)) {
+                            currentFile = file;
+                            showFilePreview(file);
+                        } else {
+                            this.value = '';
+                        }
+                    }
+                });
+            }
+            
+            // Remove file handler
+            if (removeFileBtn) {
+                removeFileBtn.addEventListener('click', function() {
+                    removeFile();
+                });
+            }
+            
+            // Validate file
+            function validateFile(file) {
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                const allowedTypes = [
+                    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+                    'application/pdf', 'application/msword', 
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'text/plain', 'application/zip', 'application/x-rar-compressed'
+                ];
+                
+                if (file.size > maxSize) {
+                    alert('File terlalu besar. Maksimal 10MB.');
+                    return false;
+                }
+                
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Tipe file tidak didukung. Gunakan gambar, PDF, DOC, TXT, ZIP, atau RAR.');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Show file preview
+            function showFilePreview(file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                
+                // Show image preview for images
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        // Change icon to image icon
+                        const icon = filePreview.querySelector('.bi-file-earmark');
+                        if (icon) {
+                            icon.className = 'bi bi-image me-2 text-primary';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.style.display = 'none';
+                    // Set appropriate icon based on file type
+                    let iconClass = 'bi-file-earmark';
+                    if (file.type === 'application/pdf') iconClass = 'bi-file-earmark-pdf';
+                    else if (file.type.includes('word')) iconClass = 'bi-file-earmark-word';
+                    else if (file.type === 'text/plain') iconClass = 'bi-file-earmark-text';
+                    else if (file.type.includes('zip') || file.type.includes('rar')) iconClass = 'bi-file-earmark-zip';
+                    
+                    const icon = filePreview.querySelector('.bi');
+                    if (icon) {
+                        icon.className = 'bi ' + iconClass + ' me-2 text-primary';
+                    }
+                }
+                
+                filePreview.style.display = 'block';
+                messageInput.placeholder = 'Tambahkan keterangan file (opsional)...';
+            }
+            
+            // Remove file
+            function removeFile() {
+                currentFile = null;
+                fileInput.value = '';
+                filePreview.style.display = 'none';
+                imagePreview.style.display = 'none';
+                messageInput.placeholder = 'Ketik balasan atau upload file...';
+            }
+            
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
 
             // Mobile menu handlers
             if (mobileMenuToggle) {
@@ -436,6 +644,41 @@
                     minute: '2-digit'
                 });
 
+                // Create file content if exists
+                let fileContent = '';
+                if (message.file_path) {
+                    const fileUrl = '{{ asset("storage") }}/' + message.file_path;
+                    const isImage = message.file_type && message.file_type.startsWith('image/');
+                    
+                    if (isImage) {
+                        fileContent = `
+                            <div class="file-message mb-2">
+                                <img src="${fileUrl}" class="img-fluid rounded" style="max-width: 200px; max-height: 150px; cursor: pointer;" onclick="window.open('${fileUrl}', '_blank')">
+                            </div>
+                        `;
+                    } else {
+                        let fileIcon = 'bi-file-earmark';
+                        if (message.file_type === 'application/pdf') fileIcon = 'bi-file-earmark-pdf';
+                        else if (message.file_type && message.file_type.includes('word')) fileIcon = 'bi-file-earmark-word';
+                        else if (message.file_type === 'text/plain') fileIcon = 'bi-file-earmark-text';
+                        else if (message.file_type && (message.file_type.includes('zip') || message.file_type.includes('rar'))) fileIcon = 'bi-file-earmark-zip';
+                        
+                        fileContent = `
+                            <div class="file-message mb-2">
+                                <a href="${fileUrl}" class="text-decoration-none d-flex align-items-center p-2 border rounded ${message.is_admin ? 'bg-primary-subtle' : 'bg-secondary-subtle'}" target="_blank" style="font-size: 12px;">
+                                    <i class="bi ${fileIcon} me-2"></i>
+                                    <div>
+                                        <div class="fw-semibold">${message.file_name}</div>
+                                        <div class="small text-muted">${message.file_size ? formatFileSize(message.file_size) : ''}</div>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                    }
+                }
+
+                const messageContent = fileContent + (message.message ? `<div style="font-size: 14px;">${message.message}</div>` : '');
+
                 if (message.is_admin) {
                     messageElement.classList.add('flex-row-reverse');
                     messageElement.innerHTML = `
@@ -448,7 +691,7 @@
                         <div class="me-2 me-md-3" style="max-width: 75%;">
                             <div class="bg-primary text-white rounded px-2 px-md-3 py-2">
                                 <div class="small text-white-50 fw-semibold mb-1">${message.user_name}</div>
-                                <div style="font-size: 14px;">${message.message}</div>
+                                ${messageContent}
                             </div>
                             <small class="text-muted" style="font-size: 11px;">${currentTime}</small>
                         </div>
@@ -464,7 +707,7 @@
                         <div style="max-width: 75%;">
                             <div class="bg-white border rounded px-2 px-md-3 py-2 shadow-sm">
                                 <div class="small text-primary fw-semibold mb-1">${message.user_name}</div>
-                                <div style="font-size: 14px;">${message.message}</div>
+                                ${messageContent}
                             </div>
                             <small class="text-muted" style="font-size: 11px;">${currentTime}</small>
                         </div>
@@ -483,8 +726,9 @@
                     const message = messageInput.value.trim();
                     const sessionId = currentSessionInput ? currentSessionInput.value : null;
 
-                    if (!message) {
-                        alert('Silakan ketik pesan.');
+                    // Check if we have either message or file
+                    if (!message && !currentFile) {
+                        alert('Silakan ketik pesan atau pilih file untuk dikirim.');
                         return;
                     }
 
@@ -493,23 +737,29 @@
                         return;
                     }
 
-                    // Disable send button
+                    // Disable form during submission
                     sendBtn.disabled = true;
+                    messageInput.disabled = true;
+                    if (fileBtn) fileBtn.disabled = true;
                     sendBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Mengirim...';
+
+                    // Create form data
+                    const formData = new FormData();
+                    formData.append('_token', document.querySelector('input[name="_token"]').value);
+                    formData.append('session_id', sessionId);
+                    
+                    if (message) {
+                        formData.append('message', message);
+                    }
+                    
+                    if (currentFile) {
+                        formData.append('file', currentFile);
+                    }
 
                     // Send message
                     fetch('{{ route('admin.chat.send') }}', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    ?.getAttribute('content') ||
-                                    document.querySelector('input[name="_token"]').value
-                            },
-                            body: JSON.stringify({
-                                message: message,
-                                session_id: sessionId
-                            })
+                            body: formData
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -518,10 +768,11 @@
                                 addMessageToBox(data.message);
                                 scrollToBottom();
 
-                                // Clear message input
+                                // Clear form
                                 messageInput.value = '';
+                                removeFile();
                             } else {
-                                alert('Gagal mengirim pesan. Silakan coba lagi.');
+                                alert(data.error || 'Gagal mengirim pesan. Silakan coba lagi.');
                             }
                         })
                         .catch(error => {
@@ -529,8 +780,10 @@
                             alert('Terjadi kesalahan. Silakan coba lagi.');
                         })
                         .finally(() => {
-                            // Re-enable send button
+                            // Re-enable form
                             sendBtn.disabled = false;
+                            messageInput.disabled = false;
+                            if (fileBtn) fileBtn.disabled = false;
                             sendBtn.innerHTML =
                                 '<i class="bi bi-send-fill"></i><span class="d-none d-md-inline ms-1">Kirim</span>';
                         });

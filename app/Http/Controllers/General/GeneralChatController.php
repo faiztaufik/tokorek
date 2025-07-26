@@ -37,18 +37,29 @@ class GeneralChatController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:1000',
+            'message' => 'nullable|string|max:1000',
+            'file' => 'nullable|file|max:10240|mimes:jpeg,jpg,png,gif,webp,pdf,doc,docx,txt,zip,rar', // 10MB max
         ]);
 
-        // XSS Protection - Remove script tags and dangerous HTML
-        $message = $this->sanitizeMessage($request->message);
-
-        // Additional validation for XSS patterns
-        if ($this->containsXSS($message)) {
+        // Ensure either message or file is provided
+        if (! $request->message && ! $request->hasFile('file')) {
             return response()->json([
                 'success' => false,
-                'error' => 'Pesan mengandung konten yang tidak diizinkan.',
+                'error' => 'Silakan ketik pesan atau upload file.',
             ], 422);
+        }
+
+        // XSS Protection for message if provided
+        $message = '';
+        if ($request->message) {
+            $message = $this->sanitizeMessage($request->message);
+
+            if ($this->containsXSS($message)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Pesan mengandung konten yang tidak diizinkan.',
+                ], 422);
+            }
         }
 
         // Get session ID from cookie or generate new one
@@ -59,16 +70,45 @@ class GeneralChatController extends Controller
         }
 
         // Generate a consistent user name based on session
-        $userName = 'Pengguna '.substr($sessionId, -6); // Use last 6 chars of session ID
+        $userName = 'Pengguna '.substr($sessionId, -6);
+
+        // Handle file upload
+        $filePath = null;
+        $fileName = null;
+        $fileType = null;
+        $fileSize = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileType = $file->getMimeType();
+            $fileSize = $file->getSize();
+
+            // Store file in storage/app/public/chat-files
+            $filePath = $file->store('chat-files', 'public');
+
+            // If no message provided, set a default message for file
+            if (! $message) {
+                if (str_starts_with($fileType, 'image/')) {
+                    $message = '📷 Mengirim gambar';
+                } else {
+                    $message = '📎 Mengirim file';
+                }
+            }
+        }
 
         $chatMessage = ChatMessage::create([
             'user_name' => $userName,
             'message' => $message,
             'is_admin' => false,
             'session_id' => $sessionId,
+            'file_path' => $filePath,
+            'file_name' => $fileName,
+            'file_type' => $fileType,
+            'file_size' => $fileSize,
         ]);
 
-        broadcast(new MessageSent($chatMessage))->toOthers();
+        broadcast(new MessageSent($chatMessage));
 
         return response()->json([
             'success' => true,

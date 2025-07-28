@@ -11,6 +11,10 @@
         margin-right: 8px;
     }
 
+    .topbar .contact-info .whatsapp-icon {
+        color: #25D366;
+    }
+
     .topbar .social-icons a {
         width: 32px;
         height: 32px;
@@ -78,10 +82,13 @@
                     <i class="fa fa-map-marker-alt"></i>
                     <span>Jl. Sepakat 2 A. Yani 1, Pontianak</span>
                 </div>
-                <div class="d-flex align-items-center">
-                    <i class="far fa-envelope-open"></i>
-                    <span>servicekomputer@email.com</span>
-                </div>
+                <div class="me-4 d-flex align-items-center">
+                    <i class="fab fa-whatsapp whatsapp-icon"></i>
+                    <a href="https://wa.me/+6282148424778" target="_blank" class="text-decoration-none text-dark">
+                    <!-- <a href="https://wa.me/+6282148424778?text=Saya%20ingin%20bertanya%20admin" target="_blank" class="text-decoration-none text-dark">   jika di perlukan -->
+                        <span>+62 821-4842-4778</span>
+                    </a>
+                </div>                
             </div>
 
             <!-- Social Media -->

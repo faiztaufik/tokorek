@@ -52,6 +52,11 @@
     <!-- Service Start -->
     <div class="container-xxl py-5">
         <div class="container">
+            <!-- Judul tambahan -->
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h1 class="mb-5">Pelayanan yang tersedia</h1> 
+            </div>
+
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6 service-item-top wow fadeInUp" data-wow-delay="0.1s">
                     <div class="overflow-hidden">
@@ -59,34 +64,40 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between bg-light p-4">
                         <h5 class="text-truncate me-3 mb-0">Servis Hardware Laptop</h5>
-                        <a class="btn btn-square btn-outline-primary border-2 border-white flex-shrink-0" href=""><i
-                                class="fa fa-arrow-right"></i></a>
+                        <a class="btn btn-square btn-outline-primary border-2 border-white flex-shrink-0" href="">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
+
                 <div class="col-lg-4 col-md-6 service-item-top wow fadeInUp" data-wow-delay="0.3s">
                     <div class="overflow-hidden">
                         <img class="img-fluid w-100 h-100" src="{{ asset('img/services/service-2.jpg') }}" alt="">
                     </div>
                     <div class="d-flex align-items-center justify-content-between bg-light p-4">
                         <h5 class="text-truncate me-3 mb-0">Instalasi & Troubleshooting Software</h5>
-                        <a class="btn btn-square btn-outline-primary border-2 border-white flex-shrink-0" href=""><i
-                                class="fa fa-arrow-right"></i></a>
+                        <a class="btn btn-square btn-outline-primary border-2 border-white flex-shrink-0" href="">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
+
                 <div class="col-lg-4 col-md-6 service-item-top wow fadeInUp" data-wow-delay="0.5s">
                     <div class="overflow-hidden">
                         <img class="img-fluid w-100 h-100" src="{{ asset('img/services/service-3.jpg') }}" alt="">
                     </div>
                     <div class="d-flex align-items-center justify-content-between bg-light p-4">
                         <h5 class="text-truncate me-3 mb-0">Pemeriksaan Cepat</h5>
-                        <a class="btn btn-square btn-outline-primary border-2 border-white flex-shrink-0" href=""><i
-                                class="fa fa-arrow-right"></i></a>
+                        <a class="btn btn-square btn-outline-primary border-2 border-white flex-shrink-0" href="">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Service End -->
+
 
     <!-- Team Start -->
     <div class="container-xxl py-5">

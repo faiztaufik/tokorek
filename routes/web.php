@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminBrandController;
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminChatController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminGoodController;
 use App\Http\Controllers\Admin\AdminGoodInController;
@@ -42,6 +43,8 @@ Route::get('/', [GeneralHomeController::class, 'index'])->name('general.home');
 Route::get('/layanan', [GeneralServiceController::class, 'index'])->name('general.service');
 Route::get('/service/invoice/{receipt_code}', [GeneralServiceController::class, 'export'])->name('general.invoice.export');
 Route::get('/live-chat', [GeneralChatController::class, 'index'])->name('general.live-chat');
+Route::post('/live-chat/send', [GeneralChatController::class, 'store'])->name('general.live-chat.send');
+Route::get('/live-chat/messages', [GeneralChatController::class, 'loadMessages'])->name('general.live-chat.messages');
 Route::get('/faq', [GeneralFrequentlyAskedQuestionController::class, 'index'])->name('general.faq');
 
 Route::middleware('guest')->group(function () {
@@ -103,6 +106,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/dashboard-admin/barang-keluar/tambah', [AdminGoodOutController::class, 'store'])->name('admin.goodouts.store');
     Route::delete('/dashboard-admin/barang-keluar/{goodout}/hapus', [AdminGoodOutController::class, 'destroy'])->name('admin.goodouts.destroy');
     Route::get('/good-out/export/pdf', [AdminGoodOutController::class, 'exportPdf'])->name('admin.goodouts.export.pdf');
+
+    // Admin Chat Routes
+    Route::get('/dashboard-admin/chat', [AdminChatController::class, 'index'])->name('admin.chat');
+    Route::get('/dashboard-admin/chat/session/{sessionId}', [AdminChatController::class, 'getSession'])->name('admin.chat.session');
+    Route::get('/dashboard-admin/chat/unread-count', [AdminChatController::class, 'getUnreadCount'])->name('admin.chat.unread-count');
+    Route::post('/dashboard-admin/chat/send', [AdminChatController::class, 'store'])->name('admin.chat.send');
+    Route::delete('/dashboard-admin/chat/clear', [AdminChatController::class, 'clear'])->name('admin.chat.clear');
 });
 
 Route::middleware(['auth', 'role:technician'])->group(function () {

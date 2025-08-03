@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -17,6 +18,9 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{{ asset('templates/admin-template/css/sb-admin-2.min.css') }}" rel="stylesheet">
@@ -148,6 +152,37 @@
     <script src="{{ asset('templates/admin-template/js/demo/datatables-demo.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Global Chat Unread Count -->
+    <script>
+        // Function to update chat unread count in sidebar
+        function updateChatUnreadCount() {
+            fetch('{{ route("admin.chat.unread-count") }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const badge = document.getElementById('chat-unread-badge');
+                        if (badge) {
+                            if (data.unread_count > 0) {
+                                badge.textContent = data.unread_count;
+                                badge.style.display = 'inline';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching unread count:', error));
+        }
+
+        // Update unread count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateChatUnreadCount();
+            
+            // Update unread count every 30 seconds
+            setInterval(updateChatUnreadCount, 30000);
+        });
+    </script>
 
     @stack('scripts')
 

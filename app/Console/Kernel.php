@@ -12,7 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('chat:cleanup')->hourly();
+
+        // Alternative: Clean up every 6 hours
+        // $schedule->command('chat:cleanup')->everySixHours();
     }
 
     /**

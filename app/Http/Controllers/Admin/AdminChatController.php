@@ -1,43 +1,95 @@
 <?php
 
-namespace App\Http\Controllers\General;
+namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
-class GeneralChatController extends Controller
+class AdminChatController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        // Generate or retrieve chat session UUID from cookie
-        $sessionId = $request->cookie('chat_session_id');
+        // Get all sessions with latest message and user info
+        $sessions = ChatMessage::select([
+            'session_id', 'user_name',
+            DB::raw('MAX(created_at) as latest_message_time'),
+            DB::raw('COUNT(*) as message_count'),
+            DB::raw('SUM(CASE WHEN is_admin = 0 AND is_seen_by_admin = 0 THEN 1 ELSE 0 END) as unread_count'),
+        ])
+            ->whereNotNull('session_id')
+            ->groupBy('session_id', 'user_name')
+            ->orderBy('latest_message_time', 'desc')
+            ->get();
 
-        if (! $sessionId) {
-            $sessionId = Str::uuid()->toString();
+        // Get messages for the first session (if any)
+        $messages = collect();
+        $firstSessionId = null;
+
+        if ($sessions->count() > 0) {
+            $firstSessionId = $sessions->first()->session_id;
+            $firstSessionName = $sessions->first()->user_name;
+            $messages = ChatMessage::where('session_id', $firstSessionId)
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            // Mark messages as read for the first session
+            ChatMessage::where('session_id', $firstSessionId)
+                ->where('is_admin', false)
+                ->where('is_seen_by_admin', false)
+                ->update([
+                    'is_seen_by_admin' => true,
+                    'seen_at' => now(),
+                ]);
         }
 
-        // Only get messages for the current session
+        return view('admin.pages.chat.index', [
+            'title' => 'Live Chat Admin',
+            'sessions' => $sessions,
+            'messages' => $messages,
+            'firstSessionId' => $firstSessionId,
+            'firstSessionName' => $firstSessionName ?? null,
+        ]);
+    }
+
+    public function getSession($sessionId)
+    {
         $messages = ChatMessage::where('session_id', $sessionId)
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Store session ID in session for Chrome compatibility
-        $request->session()->put('chat_session_id', $sessionId);
+        // Mark all unread messages from users as read
+        ChatMessage::where('session_id', $sessionId)
+            ->where('is_admin', false)
+            ->where('is_seen_by_admin', false)
+            ->update([
+                'is_seen_by_admin' => true,
+                'seen_at' => now(),
+            ]);
 
-        return response()->view('general.pages.chat.index', [
-            'title' => 'Live Chat',
+        return response()->json([
+            'success' => true,
             'messages' => $messages,
-            'currentSessionId' => $sessionId,
-        ])->cookie('chat_session_id', $sessionId, 60 * 24 * 30); // 30 days
+        ]);
+    }
+
+    public function getUnreadCount()
+    {
+        $totalUnread = ChatMessage::unreadByAdmin()->count();
+
+        return response()->json([
+            'success' => true,
+            'unread_count' => $totalUnread,
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'message' => 'nullable|string|max:1000',
+            'session_id' => 'nullable|string',
             'file' => 'nullable|file|max:10240|mimes:jpeg,jpg,png,gif,webp,pdf,doc,docx,txt,zip,rar', // 10MB max
         ]);
 
@@ -62,24 +114,6 @@ class GeneralChatController extends Controller
             }
         }
 
-        // Get session ID from cookie or generate new one
-        $sessionId = $request->cookie('chat_session_id');
-
-        if (! $sessionId) {
-            $sessionId = Str::uuid()->toString();
-        }
-
-        // Generate a consistent user name based on session
-        // Format: Pengguna [date][session count] e.g. Pengguna 0201
-        $firstMessage = ChatMessage::where('session_id', $sessionId)->first();
-        if (! $firstMessage) {
-            // Count total unique sessions to get the next session number
-            $totalSessions = ChatMessage::select('session_id')->distinct()->count('session_id') + 1;
-            $userName = 'Pengguna '.now()->format('d').str_pad($totalSessions, 2, '0', STR_PAD_LEFT);
-        } else {
-            $userName = $firstMessage->user_name;
-        }
-
         // Handle file upload
         $filePath = null;
         $fileName = null;
@@ -98,18 +132,18 @@ class GeneralChatController extends Controller
             // If no message provided, set a default message for file
             if (! $message) {
                 if (str_starts_with($fileType, 'image/')) {
-                    $message = '📷 Mengirim gambar';
+                    $message = '📷 Admin mengirim gambar';
                 } else {
-                    $message = '📎 Mengirim file';
+                    $message = '📎 Admin mengirim file';
                 }
             }
         }
 
         $chatMessage = ChatMessage::create([
-            'user_name' => $userName,
+            'user_name' => 'Admin',
             'message' => $message,
-            'is_admin' => false,
-            'session_id' => $sessionId,
+            'is_admin' => true,
+            'session_id' => $request->session_id,
             'file_path' => $filePath,
             'file_name' => $fileName,
             'file_type' => $fileType,
@@ -121,7 +155,7 @@ class GeneralChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $chatMessage,
-        ])->cookie('chat_session_id', $sessionId, 60 * 24 * 30); // 30 days
+        ]);
     }
 
     /**
@@ -173,10 +207,13 @@ class GeneralChatController extends Controller
         return false;
     }
 
-    public function loadMessages()
+    public function clear()
     {
-        $messages = ChatMessage::latest()->take(50)->get()->reverse()->values();
+        ChatMessage::truncate();
 
-        return response()->json($messages);
+        return response()->json([
+            'success' => true,
+            'message' => 'All chats have been cleared.',
+        ]);
     }
 }

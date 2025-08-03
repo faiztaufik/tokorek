@@ -14,13 +14,13 @@ class AdminChatController extends Controller
     {
         // Get all sessions with latest message and user info
         $sessions = ChatMessage::select([
-            'session_id',
+            'session_id', 'user_name',
             DB::raw('MAX(created_at) as latest_message_time'),
             DB::raw('COUNT(*) as message_count'),
             DB::raw('SUM(CASE WHEN is_admin = 0 AND is_seen_by_admin = 0 THEN 1 ELSE 0 END) as unread_count'),
         ])
             ->whereNotNull('session_id')
-            ->groupBy('session_id')
+            ->groupBy('session_id', 'user_name')
             ->orderBy('latest_message_time', 'desc')
             ->get();
 
@@ -30,6 +30,7 @@ class AdminChatController extends Controller
 
         if ($sessions->count() > 0) {
             $firstSessionId = $sessions->first()->session_id;
+            $firstSessionName = $sessions->first()->user_name;
             $messages = ChatMessage::where('session_id', $firstSessionId)
                 ->orderBy('created_at', 'asc')
                 ->get();
@@ -40,7 +41,7 @@ class AdminChatController extends Controller
                 ->where('is_seen_by_admin', false)
                 ->update([
                     'is_seen_by_admin' => true,
-                    'seen_at' => now()
+                    'seen_at' => now(),
                 ]);
         }
 
@@ -49,6 +50,7 @@ class AdminChatController extends Controller
             'sessions' => $sessions,
             'messages' => $messages,
             'firstSessionId' => $firstSessionId,
+            'firstSessionName' => $firstSessionName ?? null,
         ]);
     }
 
@@ -64,7 +66,7 @@ class AdminChatController extends Controller
             ->where('is_seen_by_admin', false)
             ->update([
                 'is_seen_by_admin' => true,
-                'seen_at' => now()
+                'seen_at' => now(),
             ]);
 
         return response()->json([
@@ -76,7 +78,7 @@ class AdminChatController extends Controller
     public function getUnreadCount()
     {
         $totalUnread = ChatMessage::unreadByAdmin()->count();
-        
+
         return response()->json([
             'success' => true,
             'unread_count' => $totalUnread,
@@ -92,7 +94,7 @@ class AdminChatController extends Controller
         ]);
 
         // Ensure either message or file is provided
-        if (!$request->message && !$request->hasFile('file')) {
+        if (! $request->message && ! $request->hasFile('file')) {
             return response()->json([
                 'success' => false,
                 'error' => 'Silakan ketik pesan atau upload file.',
@@ -123,12 +125,12 @@ class AdminChatController extends Controller
             $fileName = $file->getClientOriginalName();
             $fileType = $file->getMimeType();
             $fileSize = $file->getSize();
-            
+
             // Store file in storage/app/public/chat-files
             $filePath = $file->store('chat-files', 'public');
-            
+
             // If no message provided, set a default message for file
-            if (!$message) {
+            if (! $message) {
                 if (str_starts_with($fileType, 'image/')) {
                     $message = '📷 Admin mengirim gambar';
                 } else {

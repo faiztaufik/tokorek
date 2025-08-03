@@ -35,7 +35,8 @@
                                                 onclick="loadSession('{{ $session->session_id }}', this)">
                                                 <div class="d-flex justify-content-between align-items-start">
                                                     <div class="flex-grow-1">
-                                                        <h6 class="mb-1 fw-bold fs-6">Pengguna {{ $session->session_id }}
+                                                        <h6 class="mb-1 fw-bold fs-6">
+                                                            {{ $session->user_name }}
                                                         </h6>
                                                         <small class="text-muted d-block">Session:
                                                             {{ substr($session->session_id, 0, 8) }}...</small>
@@ -81,7 +82,7 @@
                                         <div>
                                             <h6 class="mb-0 fs-6" id="active-user-name">
                                                 @if($firstSessionId)
-                                                    Pengguna {{ $firstSessionId }}
+                                                    {{ $firstSessionName }}
                                                 @else
                                                     Select Session
                                                 @endif
@@ -645,7 +646,7 @@
                          onclick="loadSession('${message.session_id}', this)">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-bold fs-6">Pengguna ${message.session_id}</h6>
+                                <h6 class="mb-1 fw-bold fs-6">${message.user_name}</h6>
                                 <small class="text-muted d-block">Session: ${message.session_id.substring(0, 8)}...</small>
                                 <small class="text-muted">1 messages</small>
                             </div>

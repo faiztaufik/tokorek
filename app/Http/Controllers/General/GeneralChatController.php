@@ -70,7 +70,15 @@ class GeneralChatController extends Controller
         }
 
         // Generate a consistent user name based on session
-        $userName = 'Pengguna '.substr($sessionId, -6);
+        // Format: Pengguna [date][session count] e.g. Pengguna 0201
+        $firstMessage = ChatMessage::where('session_id', $sessionId)->first();
+        if (! $firstMessage) {
+            // Count total unique sessions to get the next session number
+            $totalSessions = ChatMessage::select('session_id')->distinct()->count('session_id') + 1;
+            $userName = 'Pengguna '.now()->format('d').str_pad($totalSessions, 2, '0', STR_PAD_LEFT);
+        } else {
+            $userName = $firstMessage->user_name;
+        }
 
         // Handle file upload
         $filePath = null;

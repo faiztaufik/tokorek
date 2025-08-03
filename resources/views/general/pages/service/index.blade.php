@@ -24,8 +24,8 @@
         @if ($repair)
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Status Perbaikan - {{ $repair->receipt_code }}</h5>
-                    <p class="mb-1">Laptop: <strong>{{ $repair->laptop->name }} {{ $repair->laptop->model }}</strong></p>
+                    <h5 class="card-title">Status Perbaikan - {{ $repair->receipt_code }}</h5>                    
+                    <p class="mb-1">Laptop: <strong>{{ $repair->laptop->brand->name }} {{ $repair->laptop->name }} {{ $repair->model }}</strong></p>
                     <p class="mb-1">Tanggal Masuk:
                         {{ \Carbon\Carbon::parse($repair->date_in)->translatedFormat('d F Y') }}</p>
                     <p class="mb-1">Status:

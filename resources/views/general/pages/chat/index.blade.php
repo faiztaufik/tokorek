@@ -205,9 +205,7 @@
                         <i class="bi bi-send-fill me-1"></i> Kirim
                     </button>
                 </div>
-                <small class="text-muted">Pesan akan ditampilkan sebagai
-                    "{{ 'Pengguna ' . substr($currentSessionId, -6) }}" | Session:
-                    {{ substr($currentSessionId, 0, 8) }}...</small>
+                <small class="text-muted">Pesan akan terhapus dalam 24 jam</small>
                 <input type="hidden" id="current-session-id" value="{{ $currentSessionId }}">
             </form>
         </div>

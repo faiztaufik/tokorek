@@ -14,7 +14,7 @@ class GeneralServiceController extends Controller
         $repair = null;
 
         if ($request->filled('receipt_code')) {
-            $repair = Repair::with(['technician', 'laptop', 'services'])
+            $repair = Repair::with(['technician', 'laptop.brand', 'services'])
                 ->where('receipt_code', $request->receipt_code)
                 ->first();
         }

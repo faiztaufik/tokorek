@@ -59,7 +59,7 @@
                                 <td>{{ \Carbon\Carbon::parse($repair->date_in)->format('d M Y') }}</td>
                                 <td>{{ $repair->date_taken_back ? \Carbon\Carbon::parse($repair->date_taken_back)->format('d M Y') : '-' }}
                                 </td>
-                                <td>{{ $repair->name }}</td>
+                                <td>{{ $repair->customer_name }}</td>
                                 <td>{{ $repair->technician->name }}</td>
                                 <td>{{ $repair->laptop->name }}</td>
                                 <td>{{ $repair->customer_complaint }}</td>

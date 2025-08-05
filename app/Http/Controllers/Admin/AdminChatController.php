@@ -20,6 +20,7 @@ class AdminChatController extends Controller
             DB::raw('SUM(CASE WHEN is_admin = 0 AND is_seen_by_admin = 0 THEN 1 ELSE 0 END) as unread_count'),
         ])
             ->whereNotNull('session_id')
+            ->where('is_admin', false)
             ->groupBy('session_id', 'user_name')
             ->orderBy('latest_message_time', 'desc')
             ->get();

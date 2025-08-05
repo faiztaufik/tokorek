@@ -571,6 +571,7 @@
                             const existingSession = document.querySelector(`[data-session-id="${e.session_id}"]`);
                             if (!existingSession && e.session_id && !e.is_admin) {
                                 // Add new session to the sidebar only for user messages
+                                console.log('New session detected:', e.session_id);
                                 addNewSessionToSidebar(e);
                             }
 

@@ -73,36 +73,36 @@
             </ul>
 
             <!-- Right User Info / Login -->
-            <div class="user-box">
-                <div class="user-icon">
-                    <i class="fa fa-user"></i>
-                </div>
-                <div class="user-info text-white">
-                    @guest
-                        <a href="{{ route('general.login') }}" class="btn btn-sm btn-light text-primary fw-semibold">Login</a>
-                    @else
-                        <div class="mb-1 small">Selamat datang,</div>
-                        <div class="fw-bold text-white">{{ Auth::user()->name }}</div>
+                <div class="user-box">
+                    <div class="user-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="user-info text-white">
+                        @guest
+                            <a href="{{ route('general.login') }}" class="btn btn-sm btn-light text-primary fw-semibold" style="width: 130px">Login</a>
+                            <small class="text-white d-block mt-1" style="font-size: 0.55rem; opacity: 0.8;">*hanya untuk Admin dan Teknisi</small>
+                        @else
+                            <div class="mb-1 small">Selamat datang,</div>
+                            <div class="fw-bold text-white">{{ Auth::user()->name }}</div>
 
-                        @php
-                            $role = Auth::user()->role;
-                            $profileRoute = match ($role) {
-                                'admin' => route('admin.profile'),
-                                'technician' => route('technician.profile'),
-                                'customer' => route('customer.profile'),
-                                default => '#',
-                            };
-                        @endphp
+                            @php
+                                $role = Auth::user()->role;
+                                $profileRoute = match ($role) {
+                                    'admin' => route('admin.profile'),
+                                    'technician' => route('technician.profile'),                                    
+                                    default => '#',
+                                };
+                            @endphp
 
-                        <a href="{{ $profileRoute }}" class="btn btn-sm btn-outline-light mt-1">Lihat Profil</a>
-                        <form action="{{ route('general.logout') }}" method="POST" class="d-inline mt-1">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-                        </form>
-                    @endguest
+                            <a href="{{ $profileRoute }}" class="btn btn-sm btn-outline-light mt-1">Lihat Profil</a>
+                            <form action="{{ route('general.logout') }}" method="POST" class="d-inline mt-1">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                            </form>
+                        @endguest
+                    </div>
                 </div>
-            </div>
-        </div>
+
     </nav>
 </div>
 <!-- Navbar End -->

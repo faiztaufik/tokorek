@@ -275,42 +275,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Mobile Overlay -->
-    <div class="mobile-overlay" id="mobile-overlay"></div>
-
-    <!-- Quick Replies Modal -->
-    <div class="modal fade" id="quickRepliesModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Quick Replies</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary text-start quick-reply"
-                            data-message="Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?">
-                            <i class="bi bi-chat-left-text me-2"></i>Salam Pembuka
-                        </button>
-                        <button class="btn btn-outline-primary text-start quick-reply"
-                            data-message="Silakan berikan detail masalah laptop Anda dan kode service jika ada.">
-                            <i class="bi bi-laptop me-2"></i>Minta Detail Service
-                        </button>
-                        <button class="btn btn-outline-primary text-start quick-reply"
-                            data-message="Baik, saya akan cek status service Anda. Mohon tunggu sebentar.">
-                            <i class="bi bi-search me-2"></i>Cek Status
-                        </button>
-                        <button class="btn btn-outline-primary text-start quick-reply"
-                            data-message="Terima kasih telah menghubungi kami. Jika ada pertanyaan lain, jangan ragu untuk bertanya.">
-                            <i class="bi bi-hand-thumbs-up me-2"></i>Penutup
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </div>    
 
     @vite(['resources/js/app.js'])
 

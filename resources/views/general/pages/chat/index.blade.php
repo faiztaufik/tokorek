@@ -30,6 +30,32 @@
                 transform: translateY(0);
             }
         }
+
+        #chat-box {
+            background-image: url('/img/bg_livecht2.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            height: 450px;
+            overflow-y: auto;
+        }
+
+        #chat-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6);
+            z-index: 0;
+        }
+
+        #chat-box > * {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 
     <div class="container py-5">
@@ -39,7 +65,7 @@
         </div>
 
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-            <div class="card-body p-4 bg-light" id="chat-box" style="height: 450px; overflow-y: auto;">
+            <div class="card-body p-4" id="chat-box">
 
                 @if (isset($messages) && $messages->count() > 0)
                     @foreach ($messages as $message)
@@ -56,7 +82,6 @@
                                     <div class="bg-primary text-white rounded px-3 py-2">
                                         <div class="small text-white-50 fw-semibold mb-1">{{ $message->user_name }}</div>
 
-                                        {{-- File Display --}}
                                         @if ($message->file_path)
                                             <div class="file-message mb-2">
                                                 @if ($message->file_type && str_starts_with($message->file_type, 'image/'))
@@ -68,8 +93,7 @@
                                                     <a href="{{ asset('storage/' . $message->file_path) }}"
                                                         class="text-decoration-none d-flex align-items-center p-2 border rounded bg-primary-subtle"
                                                         target="_blank">
-                                                        <i
-                                                            class="bi 
+                                                        <i class="bi 
                                                             @if ($message->file_type === 'application/pdf') bi-file-earmark-pdf
                                                             @elseif($message->file_type && str_contains($message->file_type, 'word')) bi-file-earmark-word
                                                             @elseif($message->file_type === 'text/plain') bi-file-earmark-text
@@ -87,7 +111,6 @@
                                             </div>
                                         @endif
 
-                                        {{-- Message Text --}}
                                         @if ($message->message)
                                             <div>{{ $message->message }}</div>
                                         @endif
@@ -109,7 +132,6 @@
                                     <div class="bg-white border rounded px-3 py-2">
                                         <div class="small text-muted fw-semibold mb-1">{{ $message->user_name }}</div>
 
-                                        {{-- File Display --}}
                                         @if ($message->file_path)
                                             <div class="file-message mb-2">
                                                 @if ($message->file_type && str_starts_with($message->file_type, 'image/'))
@@ -121,8 +143,7 @@
                                                     <a href="{{ asset('storage/' . $message->file_path) }}"
                                                         class="text-decoration-none d-flex align-items-center p-2 border rounded bg-secondary-subtle"
                                                         target="_blank">
-                                                        <i
-                                                            class="bi 
+                                                        <i class="bi 
                                                             @if ($message->file_type === 'application/pdf') bi-file-earmark-pdf
                                                             @elseif($message->file_type && str_contains($message->file_type, 'word')) bi-file-earmark-word
                                                             @elseif($message->file_type === 'text/plain') bi-file-earmark-text
@@ -140,7 +161,6 @@
                                             </div>
                                         @endif
 
-                                        {{-- Message Text --}}
                                         @if ($message->message)
                                             <div>{{ $message->message }}</div>
                                         @endif

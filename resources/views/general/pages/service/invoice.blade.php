@@ -8,11 +8,30 @@
         body {
             font-family: sans-serif;
             font-size: 14px;
+            position: relative;
         }
 
-        .header,
-        .footer {
-            text-align: center;
+        .header {
+            position: relative;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;             
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .subtitle {
+            margin: 5px 0 0 0;
         }
 
         .table {
@@ -38,14 +57,21 @@
         .info p {
             margin: 4px 0;
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="header">
-        <h2>INVOICE PERBAIKAN</h2>
-        <p>Kode Nota: {{ $repair->receipt_code }}</p>
+        <h2 class="title">INVOICE PERBAIKAN</h2>
+        <p class="subtitle">Kode Nota: {{ $repair->receipt_code }}</p>
+        <!-- Logo di pojok kanan -->
+        <img src="{{ public_path('img/logoacs.png') }}" alt="Logo" class="logo">
     </div>
 
     <hr>
@@ -92,7 +118,7 @@
         </tbody>
     </table>
 
-    <div class="footer" style="margin-top: 40px;">
+    <div class="footer">
         <p>Terima kasih telah mempercayakan layanan kami.</p>
     </div>
 

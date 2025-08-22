@@ -133,29 +133,16 @@ class AdminRepairController extends Controller
             return redirect()->back()->with('error', 'Gagal memperbarui data perbaikan: ' . $e->getMessage());
         }
     }
-
-
-
-
-    public function export(Request $request)
+    public function invoice($receipt_code)
     {
-        $query = Repair::with(['technician', 'laptop']);
-
-        $start_date = $request->start_date;
-        $end_date = $request->end_date;
-
-        if ($start_date && $end_date) {
-            $query->whereBetween('date_in', [$start_date, $end_date]);
-        }
-
-        $repairs = $query->get();
+        $repair = Repair::with(['technician', 'laptop.brand', 'services'])
+            ->where('receipt_code', $receipt_code)
+            ->firstOrFail();
 
         $pdf = Pdf::loadView('admin.pages.repair.export', [
-            'repairs' => $repairs,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-        ])->setPaper('A4', 'landscape');
+            'repair' => $repair
+        ])->setPaper('A4', 'portrait');
 
-        return $pdf->download('laporan-repair.pdf');
+        return $pdf->download('invoice-' . $repair->receipt_code . '.pdf');
     }
 }

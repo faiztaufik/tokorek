@@ -26,10 +26,20 @@ class GeneralLoginController extends Controller
 
             // Coba autentikasi
             if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
+            $request->session()->regenerate();
 
-                return redirect()->route('general.home')->with('success', 'Berhasil login.');
+            $user = Auth::user();
+
+            // Cek role dan redirect sesuai
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.home')->with('success', 'Berhasil login sebagai admin.');
+            } elseif ($user->role === 'technician') {
+                return redirect()->route('technician.home')->with('success', 'Berhasil login sebagai teknisi.');
+            } else {
+                Auth::logout(); // user tak diizinkan
+                return back()->with('error', 'Anda bukan admin atau teknisi.');
             }
+        }
 
             // Jika gagal login
             return back()->withErrors([

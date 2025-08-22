@@ -6,7 +6,7 @@
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#addModal">
                 <i class="fa fa-plus"></i>
-                Tambah Laptop
+                Tambah Seri Laptop
             </button>
 
             <div class="table-responsive">
@@ -14,7 +14,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Laptop</th>
+                            <th>Nama Seri Laptop</th>
                             <th>Merk</th>
                             <th class="text-center">Aksi</th>
                         </tr>

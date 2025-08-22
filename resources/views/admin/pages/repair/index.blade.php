@@ -17,16 +17,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Filter</button>
                 <a href="{{ route('admin.repair') }}" class="btn btn-secondary ml-2">Reset</a>
-            </form>
-
-            <!-- Export Button -->
-            <div class="mb-3">
-                <a href="{{ route('admin.repair.export', ['start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
-                    class="btn btn-danger">
-                    <i class="fa fa-file-pdf-o"></i> Export PDF
-                </a>
-            </div>
-
+            </form>            
             <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addRepairModal">
                 <i class="fa fa-plus"></i> Tambah Perbaikan
             </button>
@@ -87,7 +78,9 @@
                                 <td>Rp{{ number_format($repair->total_price, 0, ',', '.') }}</td>
                                 <td>
                                     <a href="{{ route('admin.repair.show', $repair->id) }}"
-                                        class="btn btn-sm btn-info">Detail</a>
+                                        class="btn btn-sm btn-info mb-2">Detail</a>
+                                    <a href="{{ route('admin.repair.invoice', $repair->receipt_code) }}" 
+                                    class="btn btn-sm btn-danger" target="_blank">Invoice</a>
                                 </td>
                             </tr>
                         @empty

@@ -170,6 +170,14 @@
                             @enderror
                         </div>
                         <div class="form-group">
+                            <label>Konfirmasi Password</label>
+                            <input type="password" name="password_confirmation"
+                                class="form-control @error('password_confirmation') is-invalid @enderror" required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
                             <label>Role</label>
                             <select name="role" class="form-control @error('role') is-invalid @enderror" required>
                                 <option value="technician">Technician</option>

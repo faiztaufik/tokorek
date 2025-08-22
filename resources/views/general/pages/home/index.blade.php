@@ -5,7 +5,7 @@
         <div class="owl-carousel header-carousel position-relative">
             <!-- Slide 1 -->
             <div class="owl-carousel-item position-relative">
-                <img class="img-fluid" src="{{ asset('img/carousel/carousel-1.jpg') }}" alt="">
+                <img class="img-fluid" src="{{ asset('img/carousel/carousel_1.jpeg') }}" alt="">
                 <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center"
                     style="background: rgba(0, 0, 0, .4);">
                     <div class="container">
@@ -26,7 +26,7 @@
 
             <!-- Slide 2 -->
             <div class="owl-carousel-item position-relative">
-                <img class="img-fluid" src="{{ asset('img/carousel/carousel-2.jpg') }}" alt="">
+                <img class="img-fluid" src="{{ asset('img/carousel/carousel_2.jpeg') }}" alt="">
                 <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center"
                     style="background: rgba(0, 0, 0, .4);">
                     <div class="container">

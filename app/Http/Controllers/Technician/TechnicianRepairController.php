@@ -103,23 +103,11 @@ class TechnicianRepairController extends Controller
         }
     }
 
-    public function export(Request $request)
+    public function invoice(Repair $repair)
     {
-        $user = Auth::user();
-
-        $repairs = Repair::with(['technician', 'laptop', 'services'])
-            ->when($request->start_date, fn($query) => $query->whereDate('date_in', '>=', $request->start_date))
-            ->when($request->end_date, fn($query) => $query->whereDate('date_in', '<=', $request->end_date))
-            ->when($user->role === 'technician', fn($query) => $query->where('technician_id', $user->id))
-            ->orderBy('date_in')
-            ->get();
-
-        $pdf = Pdf::loadView('technician.pages.repair.export', [
-            'repairs' => $repairs,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ])->setPaper('A4', 'landscape');
-
-        return $pdf->download('laporan-repair.pdf');
+        $pdf = Pdf::loadView('technician.pages.repair.export', [ // ← ganti 'invoice' jadi 'export'
+            'repair' => $repair
+        ])->setPaper('A4', 'portrait');
+        return $pdf->download('invoice-' . $repair->receipt_code . '.pdf');
     }
 }

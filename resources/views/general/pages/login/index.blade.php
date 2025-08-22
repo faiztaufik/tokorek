@@ -39,10 +39,22 @@
                 transform: translateY(0);
             }
         }
+        .form-group {
+        position: relative;
+        }
 
         .form-icon {
             position: absolute;
-            top: 70%;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+        }
+
+        .form-icon {
+            position: absolute;
+            top: 43px;
             left: 15px;
             transform: translateY(-50%);
             color: #6c757d;
@@ -76,9 +88,7 @@
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>Terjadi kesalahan:</strong>
                         <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                            Anda bukan admin atau teknisi
                         </ul>
                     </div>
                 @endif

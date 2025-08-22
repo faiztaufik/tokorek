@@ -12,7 +12,7 @@ class AdminBrandController extends Controller
     {
         $brands = Brand::all();
         return view('admin.pages.brand.index', [
-            'title' => 'Merk Perangkat',
+            'title' => 'Merk Laptop',
             'brands' => $brands,
         ]);
     }

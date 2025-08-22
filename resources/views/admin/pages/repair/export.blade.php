@@ -1,128 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <title>Data Perbaikan</title>
+    <title>Invoice - {{ $repair->receipt_code }}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-family: sans-serif;
+            font-size: 14px;
+            position: relative;
         }
 
-        table {
+        .header {
+            position: relative;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 1px;
+            right: 30px;
+            width: 120px;             
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .subtitle {
+            margin: 5px 0 0 0;
+        }
+
+        .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
+            margin-top: 20px;
         }
 
-        th,
-        td {
-            border: 1px solid #333;
-            padding: 6px;
-            text-align: left;
+        .table th,
+        .table td {
+            border: 1px solid #000;
+            padding: 8px;
         }
 
-        th {
-            background-color: #f2f2f2;
+        .right {
+            text-align: right;
         }
 
-        .badge {
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: white;
+        .info {
+            margin-top: 20px;
         }
 
-        .badge-warning {
-            background-color: #f0ad4e;
+        .info p {
+            margin: 4px 0;
         }
 
-        .badge-primary {
-            background-color: #007bff;
-        }
-
-        .badge-success {
-            background-color: #28a745;
-        }
-
-        .badge-secondary {
-            background-color: #6c757d;
+        .footer {
+            text-align: center;
+            margin-top: 40px;
         }
     </style>
 </head>
 
 <body>
-    <h2>Data Perbaikan</h2>
-    @if ($start_date && $end_date)
-        <p>Periode: {{ \Carbon\Carbon::parse($start_date)->format('d M Y') }} -
-            {{ \Carbon\Carbon::parse($end_date)->format('d M Y') }}</p>
-    @endif
 
-    <table>
+    <div class="header">
+        <h2 class="title">INVOICE PERBAIKAN</h2>
+        <p class="subtitle">Kode Nota: {{ $repair->receipt_code }}</p>        
+        <img src="{{ public_path('img/logoacs.png') }}" alt="Logo" class="logo">
+    </div>
+
+    <hr>
+
+    <div class="info">
+        <p><strong>Tanggal Masuk:</strong> {{ \Carbon\Carbon::parse($repair->date_in)->translatedFormat('d F Y') }}</p>
+        @if ($repair->date_taken_back)
+            <p><strong>Tanggal Diambil:</strong>
+                {{ \Carbon\Carbon::parse($repair->date_taken_back)->translatedFormat('d F Y') }}</p>
+        @endif
+        <p><strong>Status:</strong> {{ ucfirst($repair->service_state) }}</p>
+        <p><strong>Nama Customer:</strong> {{ $repair->customer_name }}</p>
+        <p><strong>No. Telepon:</strong> {{ $repair->customer_phone_number }}</p>
+        <p><strong>Laptop:</strong> {{ $repair->laptop->name }} - {{ $repair->model }}</p>
+        <p><strong>Teknisi:</strong> {{ $repair->technician->name }}</p>
+        <p><strong>Keluhan:</strong> {{ $repair->customer_complaint }}</p>
+        <p><strong>Diagnosa:</strong> {{ $repair->problem ?? '-' }}</p>
+    </div>
+
+    <table class="table">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kode Nota</th>
-                <th>Tanggal Masuk</th>
-                <th>Tanggal Diambil</th>
-                <th>Customer</th>
-                <th>Nomor Telp Customer</th>
-                <th>Teknisi</th>
-                <th>Laptop</th>
-                <th>Keluhan</th>
-                <th>Masalah</th>
-                <th>Status</th>
-                <th>Detail Layanan</th>
-                <th>Total Biaya</th>
+                <th>Nama Layanan</th>
+                <th class="right">Harga</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($repairs as $repair)
+            @forelse ($repair->services as $index => $service)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $repair->receipt_code }}</td>
-                    <td>{{ \Carbon\Carbon::parse($repair->date_in)->format('d M Y') }}</td>
-                    <td>
-                        {{ $repair->date_taken_back ? \Carbon\Carbon::parse($repair->date_taken_back)->format('d M Y') : '-' }}
-                    </td>
-                    <td>{{ $repair->customer_name }}</td>
-                    <td>{{ $repair->customer_phone_number }}</td>
-                    <td>{{ $repair->technician->name }}</td>
-                    <td>{{ $repair->laptop->name }}</td>
-                    <td>{{ $repair->customer_complaint }}</td>
-                    <td>{{ $repair->problem ?? '-' }}</td>
-                    <td>
-                        <span
-                            class="badge 
-                            @if ($repair->service_state == 'checking') badge-warning
-                            @elseif ($repair->service_state == 'in progress') badge-primary
-                            @elseif ($repair->service_state == 'done') badge-success
-                            @elseif ($repair->service_state == 'taken back') badge-secondary @endif
-                        ">
-                            {{ $repair->service_state }}
-                        </span>
-                    </td>
-                    <td>
-                        @if ($repair->services && $repair->services->count())
-                            <ul style="padding-left: 18px; margin: 0;">
-                                @foreach ($repair->services as $service)
-                                    <li>{{ $service->name }} (Rp{{ number_format($service->price, 0, ',', '.') }})
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            -
-                        @endif
-                    </td>
-                    <td>Rp{{ number_format($repair->total_price, 0, ',', '.') }}</td>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $service->name }}</td>
+                    <td class="right">Rp{{ number_format($service->price, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="12" style="text-align: center;">Tidak ada data perbaikan.</td>
+                    <td colspan="3">Belum ada layanan yang ditambahkan.</td>
                 </tr>
             @endforelse
+            <tr>
+                <td colspan="2"><strong>Total Biaya</strong></td>
+                <td class="right"><strong>Rp{{ number_format($repair->total_price, 0, ',', '.') }}</strong></td>
+            </tr>
         </tbody>
     </table>
+
+    <div class="footer">
+        <p>Terima kasih telah mempercayakan layanan kami.</p>
+    </div>
+
 </body>
 
 </html>

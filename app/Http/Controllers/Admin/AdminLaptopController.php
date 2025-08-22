@@ -14,7 +14,7 @@ class AdminLaptopController extends Controller
         $laptops = Laptop::with('brand')->get();
         $brands = Brand::all();
         return view('admin.pages.laptop.index', [
-            'title' => 'Laptop',
+            'title' => 'Seri Laptop',
             'laptops' => $laptops,
             'brands' => $brands,
         ]);

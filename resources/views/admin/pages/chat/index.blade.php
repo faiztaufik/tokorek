@@ -100,7 +100,7 @@
 
                                 <!-- Messages Container -->
                                 <div class="flex-grow-1 p-2 p-md-4 bg-light overflow-auto" id="admin-chat-box"
-                                    style="max-height: calc(70vh - 120px);">
+                                    style="max-height: calc(70vh - 120px); position: relative; background-image: url('{{ asset('img/bg_livecht2.png') }}'); background-size: cover; background-repeat: no-repeat; background-position: center;">
                                     @if($messages->count() > 0)
                                         @foreach ($messages as $message)
                                             @if ($message->is_admin)

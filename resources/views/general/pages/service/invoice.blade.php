@@ -19,8 +19,8 @@
 
         .logo {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 1px;
+            right: 30px;
             width: 120px;             
         }
 
@@ -69,8 +69,7 @@
 
     <div class="header">
         <h2 class="title">INVOICE PERBAIKAN</h2>
-        <p class="subtitle">Kode Nota: {{ $repair->receipt_code }}</p>
-        <!-- Logo di pojok kanan -->
+        <p class="subtitle">Kode Nota: {{ $repair->receipt_code }}</p>        
         <img src="{{ public_path('img/logoacs.png') }}" alt="Logo" class="logo">
     </div>
 

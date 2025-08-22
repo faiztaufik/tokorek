@@ -59,15 +59,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard-admin/profil', [AdminProfileController::class, 'index'])->name('admin.profile');
     Route::put('/dashboard-admin/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
 
-    Route::get('/dashboard-admin/merk-perangkat', [AdminBrandController::class, 'index'])->name('admin.brand');
-    Route::post('/dashboard-admin/merk-perangkat/tambah', [AdminBrandController::class, 'store'])->name('admin.brand.store');
-    Route::put('/dashboard-admin/merk-perangkat/{brand}/ubah', [AdminBrandController::class, 'update'])->name('admin.brand.update');
-    Route::delete('/dashboard-admin/merk-perangkat/{brand}/hapus', [AdminBrandController::class, 'delete'])->name('admin.brand.delete');
+    Route::get('/dashboard-admin/merk-laptop', [AdminBrandController::class, 'index'])->name('admin.brand');
+    Route::post('/dashboard-admin/merk-laptop/tambah', [AdminBrandController::class, 'store'])->name('admin.brand.store');
+    Route::put('/dashboard-admin/merk-laptop/{brand}/ubah', [AdminBrandController::class, 'update'])->name('admin.brand.update');
+    Route::delete('/dashboard-admin/merk-laptop/{brand}/hapus', [AdminBrandController::class, 'delete'])->name('admin.brand.delete');
 
-    Route::get('/dashboard-admin/laptop', [AdminLaptopController::class, 'index'])->name('admin.laptop');
-    Route::post('/dashboard-admin/laptop/tambah', [AdminLaptopController::class, 'store'])->name('admin.laptop.store');
-    Route::put('/dashboard-admin/laptop/{laptop}/ubah', [AdminLaptopController::class, 'update'])->name('admin.laptop.update');
-    Route::delete('/dashboard-admin/laptop/{laptop}/hapus', [AdminLaptopController::class, 'delete'])->name('admin.laptop.delete');
+    Route::get('/dashboard-admin/seri-laptop', [AdminLaptopController::class, 'index'])->name('admin.laptop');
+    Route::post('/dashboard-admin/seri-laptop/tambah', [AdminLaptopController::class, 'store'])->name('admin.laptop.store');
+    Route::put('/dashboard-admin/seri-laptop/{laptop}/ubah', [AdminLaptopController::class, 'update'])->name('admin.laptop.update');
+    Route::delete('/dashboard-admin/seri-laptop/{laptop}/hapus', [AdminLaptopController::class, 'delete'])->name('admin.laptop.delete');
 
     Route::get('/dashboard-admin/layanan', [AdminServiceController::class, 'index'])->name('admin.service');
     Route::post('/dashboard-admin/layanan/tambah', [AdminServiceController::class, 'store'])->name('admin.service.store');
@@ -75,12 +75,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/dashboard-admin/layanan/{service}/hapus', [AdminServiceController::class, 'delete'])->name('admin.service.delete');
 
     Route::get('/dashboard-admin/perbaikan', [AdminRepairController::class, 'index'])->name('admin.repair');
-    Route::get('/dashboard-admin/perbaikan/export', [AdminRepairController::class, 'export'])->name('admin.repair.export');
     Route::post('/dashboard-admin/perbaikan/tambah', [AdminRepairController::class, 'store'])->name('admin.repair.store');
+    Route::get('/dashboard-admin/perbaikan/invoice/{receipt_code}', [AdminRepairController::class, 'invoice'])->name('admin.repair.invoice');
     Route::get('/dashboard-admin/perbaikan/{repair}', [AdminRepairController::class, 'show'])->name('admin.repair.show');
-    Route::put('/dashboard-admin/perbaikan/{repair}', [AdminRepairController::class, 'update'])
-        ->name('admin.repair.update');
-
+    Route::put('/dashboard-admin/perbaikan/{repair}', [AdminRepairController::class, 'update'])->name('admin.repair.update');
 
     Route::get('/dashboard-admin/pengguna', [AdminUserController::class, 'index'])->name('admin.user');
     Route::post('/dashboard-admin/pengguna/tambah', [AdminUserController::class, 'store'])->name('admin.user.store');
@@ -130,11 +128,10 @@ Route::middleware(['auth', 'role:technician'])->group(function () {
     Route::post('/dashboard-teknisi/merk-perangkat/tambah', [TechnicianBrandController::class, 'store'])->name('technician.brand.store');
     Route::put('/dashboard-teknisi/merk-perangkat/{brand}/ubah', [TechnicianBrandController::class, 'update'])->name('technician.brand.update');
     Route::delete('/dashboard-teknisi/merk-perangkat/{brand}/hapus', [TechnicianBrandController::class, 'delete'])->name('technician.brand.delete');
-
+    
     Route::get('/dashboard-teknisi/perbaikan', [TechnicianRepairController::class, 'index'])->name('technician.repair');
     Route::get('/dashboard-teknisi/perbaikan/export', [TechnicianRepairController::class, 'export'])->name('technician.repair.export');
     Route::get('/dashboard-teknisi/perbaikan/{repair}', [TechnicianRepairController::class, 'show'])->name('technician.repair.show');
-
-    Route::put('/dashboard-teknisi/perbaikan/{repair}', [TechnicianRepairController::class, 'update'])
-        ->name('technician.repair.update');
+    Route::get('/dashboard-teknisi/perbaikan/{repair}/invoice', [TechnicianRepairController::class, 'invoice'])->name('technician.repair.invoice');
+    Route::put('/dashboard-teknisi/perbaikan/{repair}', [TechnicianRepairController::class, 'update'])->name('technician.repair.update');
 });

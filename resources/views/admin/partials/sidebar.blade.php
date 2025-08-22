@@ -37,8 +37,8 @@
          </a>
          <div id="perangkat" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
              <div class="bg-white py-2 collapse-inner rounded">
-                 <a class="collapse-item" href="{{ route('admin.brand') }}">Merk</a>
-                 <a class="collapse-item" href="{{ route('admin.laptop') }}">Perangkat</a>
+                 <a class="collapse-item" href="{{ route('admin.brand') }}">Merk Laptop</a>
+                 <a class="collapse-item" href="{{ route('admin.laptop') }}">Seri Laptop</a>
              </div>
          </div>
      </li>

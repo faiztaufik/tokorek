@@ -17,7 +17,7 @@ class TechnicianRepairController extends Controller
 {
     public function index(Request $request)
     {
-        $repairs = Repair::with(['technician', 'laptop', 'services'])
+        $repairs = Repair::with(['technician', 'laptop', 'services', 'repairDetails.service'])
             ->where('technician_id', Auth::id()) // ✅ filter by authenticated technician
             ->when($request->start_date, fn($query) => $query->whereDate('date_in', '>=', $request->start_date))
             ->when($request->end_date, fn($query) => $query->whereDate('date_in', '<=', $request->end_date))
@@ -108,6 +108,6 @@ class TechnicianRepairController extends Controller
         $pdf = Pdf::loadView('technician.pages.repair.export', [ // ← ganti 'invoice' jadi 'export'
             'repair' => $repair
         ])->setPaper('A4', 'portrait');
-        return $pdf->download('invoice-' . $repair->receipt_code . '.pdf');
+        return $pdf->stream('invoice-' . $repair->receipt_code . '.pdf');
     }
 }

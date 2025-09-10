@@ -57,8 +57,8 @@
                                 <td>{{ $repair->problem ?? '-' }}</td>
                                 <td>
                                     <ul class="mb-0 pl-3">
-                                        @forelse ($repair->services as $service)
-                                            <li>{{ $service->name }} (Rp{{ number_format($service->price, 0, ',', '.') }})
+                                        @forelse ($repair->repairDetails as $detail)
+                                            <li>{{ $detail->service->name }} (Rp{{ number_format($detail->price, 0, ',', '.') }})
                                             </li>
                                         @empty
                                             <li>-</li>

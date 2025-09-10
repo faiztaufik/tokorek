@@ -17,7 +17,7 @@ class AdminRepairController extends Controller
 {
     public function index(Request $request)
     {
-        $repairs = Repair::with(['technician', 'laptop', 'services'])
+        $repairs = Repair::with(['technician', 'laptop', 'services', 'repairDetails.service'])
             ->when($request->start_date, fn($query) => $query->whereDate('date_in', '>=', $request->start_date))
             ->when($request->end_date, fn($query) => $query->whereDate('date_in', '<=', $request->end_date))
             ->get();
@@ -114,15 +114,19 @@ class AdminRepairController extends Controller
 
             // Total price
             $selectedServices = $validated['services'] ?? [];
-            $totalPrice = !empty($selectedServices)
-                ? Service::whereIn('id', $selectedServices)->sum('price')
-                : 0;
+            $services = Service::whereIn('id', $selectedServices)->get();
+            $totalPrice = $services->sum('price');
 
             $repair->update([
                 'total_price' => $totalPrice,
             ]);
 
-            $repair->services()->sync($selectedServices);
+            // Sync repair_details with price
+            $syncData = [];     
+            foreach ($services as $service) {
+                $syncData[$service->id] = ['price' => $service->price];
+            }
+            $repair->services()->sync($syncData);
 
             DB::commit();
 
@@ -135,7 +139,7 @@ class AdminRepairController extends Controller
     }
     public function invoice($receipt_code)
     {
-        $repair = Repair::with(['technician', 'laptop.brand', 'services'])
+        $repair = Repair::with(['technician', 'laptop.brand', 'services', 'repairDetails.service'])
             ->where('receipt_code', $receipt_code)
             ->firstOrFail();
 
@@ -143,6 +147,6 @@ class AdminRepairController extends Controller
             'repair' => $repair
         ])->setPaper('A4', 'portrait');
 
-        return $pdf->download('invoice-' . $repair->receipt_code . '.pdf');
+        return $pdf->stream('invoice-' . $repair->receipt_code . '.pdf');
     }
 }

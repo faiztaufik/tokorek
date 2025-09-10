@@ -9,7 +9,12 @@ class RepairDetail extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id',];
+    protected $guarded = ['id'];
+    protected $fillable = [
+        'repair_id',
+        'service_id',
+        'price',
+    ];
 
     public function repair()
     {

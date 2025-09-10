@@ -45,8 +45,8 @@
                     <p class="mb-1">Diagnosa: {{ $repair->problem ?? '-' }}</p>
                     <p class="mb-1">Layanan:
                     <ul class="mb-0">
-                        @foreach ($repair->services as $service)
-                            <li>{{ $service->name }} (Rp{{ number_format($service->price, 0, ',', '.') }})</li>
+                        @foreach ($repair->repairDetails as $detail)
+                            <li>{{ $detail->service->name }} (Rp{{ number_format($detail->price, 0, ',', '.') }})</li>
                         @endforeach
                     </ul>
                     </p>

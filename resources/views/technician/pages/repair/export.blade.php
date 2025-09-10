@@ -99,11 +99,11 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($repair->services as $index => $service)
+            @forelse ($repair->repairDetails as $index => $detail)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $service->name }}</td>
-                    <td class="right">Rp{{ number_format($service->price, 0, ',', '.') }}</td>
+                    <td>{{ $detail->service->name }}</td>
+                    <td class="right">Rp{{ number_format($detail->price, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
